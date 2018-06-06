@@ -146,3 +146,18 @@ export PATH=$PATH:/Users/hrishi/Library/Android/sdk/platform-tools/
 
 export STRIPE_SECRET_KEY=sk_live_hI2aZRWCQPhEKpsC3OSJvsfP
 export STRIPE_PUBLISHABLE_KEY=pk_live_Fcc6uOElWR2FtKEOjV3fGKdg
+
+
+
+
+start 3rd commit:
+Now we need to create Heroku App:
+Heroku app install in linux mint:
+=>curl https://cli-assets.heroku.com/install-standalone.sh | sh
+=>heroku --version
+=>heroku login
+
+=>heroku create stickerswin
+=>git push heroku master
+=>heroku open
+=>heroku config:set STRIPE_PUBLISHABLE_KEY=    STRIPE_SECRET_KEY=
