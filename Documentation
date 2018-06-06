@@ -45,3 +45,104 @@ body {
 		border: solid 1px #ccc;
 	}
 }
+
+
+
+
+
+
+3.
+Now go to this site and added this javascript feature  For added Stripe Checkout:
+https://stripe.com/docs/checkout/rails
+
+Added this in gemfile:
+gem 'stripe'
+
+Now run this in terminal:
+=>bundle
+
+Create a controller:
+=>rails g controller charges
+
+Added this code in charges_controller.rb:
+
+def create
+	  # Amount in cents
+	  @amount = 500
+
+	  customer = Stripe::Customer.create(
+	    :email => params[:stripeEmail],
+	    :source  => params[:stripeToken]
+	  )
+
+	  charge = Stripe::Charge.create(
+	    :customer    => customer.id,
+	    :amount      => @amount,
+	    :description => 'pack of 5 stickers',
+	    :currency    => 'usd'
+	  )
+	rescue Stripe::CardError => e
+	  flash[:error] = e.message
+	  redirect_to :root
+	end
+
+
+
+
+Added this code in store>index.html.erb:
+
+<%= form_tag charges_path do %>
+		  <article>
+		    <% if flash[:error].present? %>
+		      <div id="error_explanation">
+		        <p><%= flash[:error] %></p>
+		      </div>
+		    <% end %>
+		  </article>
+
+		  <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+		          data-key="<%= Rails.configuration.stripe[:publishable_key] %>"
+		          data-description="Pack of 5 stickers"
+		          data-amount="500"
+		          data-locale="auto"></script>
+		<% end %>
+
+
+
+
+
+Now,
+So users can access the newly created controller, add a route to it in config/routes.rb:
+
+resources :charges
+
+
+
+Now, create a stripe.rb file in config/initializers  and added this code:
+
+Rails.configuration.stripe = {
+  :publishable_key => ENV['STRIPE_PUBLISHABLE_KEY'],
+  :secret_key      => ENV['STRIPE_SECRET_KEY']
+}
+
+Stripe.api_key = Rails.configuration.stripe[:secret_key]
+
+
+Added this in .bash_profile   Home => ctrl+H [Linux mint]:
+
+
+alias g=git
+alias pyser='python -m SimpleHTTPServer 8000'
+
+[[ -s "$HOME/.profile" ]] && source "$HOME/.profile" # Load the default .profile
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+export NVM_DIR-"$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh"] && \. "$NVM_DIR/nvm.sh"  #This loads nvm
+
+export EDITOR='subl -w -n'
+export PATH=$PATH:/Users/hrishi/Library/Android/sdk/platform-tools/
+
+export STRIPE_SECRET_KEY=sk_live_hI2aZRWCQPhEKpsC3OSJvsfP
+export STRIPE_PUBLISHABLE_KEY=pk_live_Fcc6uOElWR2FtKEOjV3fGKdg
